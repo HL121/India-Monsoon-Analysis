@@ -1,4 +1,4 @@
-# India-Monsoon-Analysis
+# India Monsoon Analysis
 
 This repository contains code and analysis for probing whether Prithvi WxC latent representations capture signals related to the Madden-Julian Oscillation (MJO).
 
