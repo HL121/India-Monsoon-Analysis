@@ -34,8 +34,8 @@ Prithvi-WxC repository and are not included in this requirements file.
 The analysis pipeline assumes daily latent vectors are available as:
 
 ```text
-latent_outputs/<year>/encoder_<timestamp>.npy
-latent_outputs/<year>/decoder_<timestamp>.npy
+latent_output/<year>/encoder_<timestamp>.npy
+latent_output/<year>/decoder_<timestamp>.npy
 ```
 
 To generate these files, clone and install Prithvi-WxC:
@@ -56,6 +56,8 @@ Start Jupyter from `Prithvi-WxC/india_monsoon_prithvi` or otherwise ensure the
 notebook kernel uses that folder as its working directory. The notebook downloads
 the required Prithvi-WxC weights and climatology files, extracts regional
 encoder and decoder features, and writes them to `latent_output/<year>/`.
+Place this `latent_output/` folder in the root of this repository before running
+the experiments.
 
 ## Running Experiments
 
