@@ -2,7 +2,7 @@ experiment_name: miso
 seed: 42
 
 paths:
-  latent_base: latent_representations
+  latent_base: latent_output
   figure_dir: outputs/figures/MISO_figures
   metrics_dir: outputs/metrics/MISO_metrics
 
