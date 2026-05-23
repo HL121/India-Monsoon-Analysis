@@ -1,17 +1,84 @@
-# India Monsoon Analysis
+# Monsoon Analysis
 
-This repository contains code and analysis for probing whether Prithvi WxC latent representations capture signals related to the Madden-Julian Oscillation (MJO).
+This repository contains the climate-index analysis pipeline used to evaluate
+Prithvi-WxC latent representations against boreal-summer monsoon and tropical
+variability indices. The pipeline trains sequence models on extracted encoder
+and decoder latents and reports leave-one-year-out prediction skill for MISO,
+MJO, and IOD targets.
 
-## Files
+## Repository Layout
 
-- `extract_latent.ipynb`: extracts latent representations from Prithvi WxC
-- `RNN_LR_analysis.ipynb`: uses LSTM / regression-based probing on latent vectors
-- `tSNE_analysis.ipynb`: visualizes latent representations
-- `climate_indices_data/`: climate index data used in the analysis
+- `src/`: reusable Python pipeline for data loading, model definition, training,
+  evaluation, and plotting.
+- `configs/`: YAML experiment settings for MISO, MJO, and IOD.
+- `climate_indices_data/`: observed climate-index time series used as targets.
+- `outputs/`: generated metric summaries and figures.
+- `extract_latent.ipynb`: notebook used inside a Prithvi-WxC checkout to produce
+  the latent vectors consumed by this repository.
 
-## Flowcharts
+## Installation
 
-<p align="center">
-  <img src="flowchart1.png" alt="Flowchart 1" width="45%" />
-  <img src="flowchart2.png" alt="Flowchart 2" width="45%" />
-</p>
+Create an environment for the climate-index analysis code:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+The dependencies for `extract_latent.ipynb` are managed separately by the
+Prithvi-WxC repository and are not included in this requirements file.
+
+## Latent Extraction
+
+The analysis pipeline assumes daily latent vectors are available as:
+
+```text
+latent_outputs/<year>/encoder_<timestamp>.npy
+latent_outputs/<year>/decoder_<timestamp>.npy
+```
+
+To generate these files, clone and install Prithvi-WxC:
+
+```bash
+git clone https://github.com/NASA-IMPACT/Prithvi-WxC.git
+cd Prithvi-WxC
+pip install '.[examples]'
+```
+
+Create a directory name: `india_monsoon_prithvi`. Place `extract_latent.ipynb` in:
+
+```text
+Prithvi-WxC/india_monsoon_prithvi/extract_latent.ipynb
+```
+
+Start Jupyter from `Prithvi-WxC/india_monsoon_prithvi` or otherwise ensure the
+notebook kernel uses that folder as its working directory. The notebook downloads
+the required Prithvi-WxC weights and climatology files, extracts regional
+encoder and decoder features, and writes them to `latent_output/<year>/`.
+
+## Running Experiments
+
+From the repository root, run:
+
+```bash
+python -m src.run_miso_experiment
+python -m src.run_mjo_experiment
+python -m src.run_iod_experiment
+```
+
+Each run reads its corresponding file in `configs/`, loads the latent vectors
+and observed index targets, trains LSTM, Transformer, and joint compressor plus
+Transformer models, and writes outputs to the configured folders under
+`outputs/`.
+
+Sequence length, years, target columns, model hyperparameters, and output paths
+are controlled in the YAML files. To reproduce alternate sequence-length
+experiments, update `sequence.seq_len` in the relevant config and rerun the
+corresponding module.
+
+## Outputs
+
+Metric summaries are saved as CSV files in `outputs/metrics/`. Figures are saved
+under `outputs/figures/`, including full-period observed-versus-predicted time
+series and, for bivariate MISO/MJO targets, phase-space trajectory plots.
